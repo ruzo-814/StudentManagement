@@ -1,9 +1,13 @@
 package raisetech.Student.Management;
 
+import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,34 +16,34 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class Application {
 
-  private String name = "LAO Student";
-  private String age = "28";
-
-
-  private Map<String, String> student;
+  @Autowired
+  private StudentRepository repository;
 
 
   public static void main(String[] args) {
-
     SpringApplication.run(Application.class, args);
   }
 
-  @GetMapping("/studentInfo")
-  public String getStudentInfo() {
+  @GetMapping("/student")
+  public List<Student> getStudent() {
+    return repository.findAll();
+  }
 
-    return this.name + " " + this.age + "age";
+  @PostMapping("/student")
+  public void resisterStudent(String name, int age) {
+
+    repository.resisterStudent(name, age);
   }
 
 
-  @PostMapping("/studentInfo")
-  public void setStudentInfo(String name, String age) {
-    this.name = student.get("name");
-    this.age = student.get("age");
+  @PatchMapping("/student")
+  public void updateStudent(String name, int age) {
+    repository.updateStudent(name, age);
   }
 
-  @PostMapping("/studentName")
-  public void updateStudentName(String name) {
-    this.name = name;
+  @DeleteMapping("/student")
+  public void deleteStudent(String name) {
+    repository.deleteStudent(name);
   }
 }
 
