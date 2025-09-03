@@ -2,6 +2,7 @@ package raisetech.Student.Management;
 
 import java.util.List;
 import java.util.Map;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
 @RestController
+@MapperScan("raisetech.Student.Management")
 public class Application {
 
   @Autowired
@@ -30,15 +32,18 @@ public class Application {
   }
 
   @PostMapping("/student")
-  public void resisterStudent(String name, int age) {
+  public void resisterStudent(String name, int age, String gender) {
 
-    repository.resisterStudent(name, age);
+    repository.resisterStudent(name, age, gender);
   }
 
 
   @PatchMapping("/student")
-  public void updateStudent(String name, int age) {
-    repository.updateStudent(name, age);
+  public void updateStudent(
+      @RequestParam String name,
+      @RequestParam(required = false) Integer age,
+      @RequestParam(required = false) String gender){
+    repository.updateStudent(name, age, gender);
   }
 
   @DeleteMapping("/student")

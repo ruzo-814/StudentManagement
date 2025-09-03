@@ -13,13 +13,13 @@ public interface StudentRepository {
   @Select("SELECT * FROM student")
   List<Student> findAll();
 
-  @Insert("INSERT student values(#{name}, #{age})")
-  void resisterStudent(String name, int age);
+  @Insert("INSERT student values(#{name}, #{age}, #{gender})")
+  void resisterStudent(String name, int age, String gender);
 
-  @Update("UPDATE student SET age = #{age} WHERE name = #{name}")
-  void updateStudent(String name, int age);
+  @Update("UPDATE student SET age = COALESCE(#{age}, age), gender = COALESCE(#{gender}, gender) WHERE name = #{name}")
+  void updateStudent(String name, Integer age, String gender);
 
-@Delete("DELETE FROM student WHERE name = #{name}")
+  @Delete("DELETE FROM student WHERE name = #{name}")
   void deleteStudent(String name);
 
 }
