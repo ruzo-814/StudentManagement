@@ -33,7 +33,6 @@ public class Application {
 
   @PostMapping("/student")
   public void resisterStudent(String name, int age, String gender) {
-
     repository.resisterStudent(name, age, gender);
   }
 
