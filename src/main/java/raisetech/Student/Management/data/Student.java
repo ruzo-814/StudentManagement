@@ -1,4 +1,4 @@
-package raisetech.Student.Management;
+package raisetech.Student.Management.data;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,9 +10,9 @@ public class Student {
 
   private String id;
   private String name;
-  private String hurigana;
+  private String furigana;
   private String nickname;
-  private String email;
+  private String emailAddress;
   private String area;
   private int age;
   private String gender;
