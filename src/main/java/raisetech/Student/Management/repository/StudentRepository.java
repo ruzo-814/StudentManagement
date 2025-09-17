@@ -1,0 +1,36 @@
+package raisetech.Student.Management.repository;
+
+import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+import raisetech.Student.Management.data.Student;
+import raisetech.Student.Management.data.StudentCourses;
+
+/**
+ *受講生情報を扱うリポジトリ。
+ *
+ * 全件検索や単一情報での検索、コース情報の検索が行えるクラスです
+ */
+
+@Mapper
+public interface StudentRepository {
+
+
+  /**
+   * 全件検索します。
+   *
+   * @return 全件検索した受講生情報の一覧
+   */
+
+  @Select("SELECT * FROM students")
+  List<Student> search();
+
+  @Select("SELECT * FROM students_courses")
+  List<StudentCourses> searchCourses();
+
+}
+
+//複雑な処理はできない
+//複雑なSQLを書くことはできる
+//リポジトリはDBにアクセスしてSQLを発行するだけ、それ以前にやって腰いことがあるならServiceに書く
+//Javaの世界で扱えるDBみたいな場所
