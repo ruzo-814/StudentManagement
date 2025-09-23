@@ -6,7 +6,15 @@
 </head>
 <body>
 <h1>受講生登録</h1>
-<form th:action="@{/student}" th:object="${student} method="post">
+<form th:action="@{/registerStudent}" th:object="${studentDetail}" method="post">
+  <div>
+    <label for="name">名前:</label>
+    //↓*{student.name]の*は、${studentDetail}の略。${studentDetail}を指定している
+    <imput type="text" id="name" th:field="*{student.name]" required />
+  </div>
+  <div>
+    <button type="submit">登録</button>
+  </div>
 </form>
 </body>
 </html>
