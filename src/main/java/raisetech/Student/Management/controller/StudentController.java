@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,6 +37,7 @@ public class StudentController {
     return "studentList"; //←HTMLのクラス名（上のstudentListとは別物。上のは名前任意）
   }
 
+
   @GetMapping("/studentCoursesList")
   public List<StudentCourses> getStudentCousesList() {
     return service.searchStudentCousesList();
@@ -48,11 +50,12 @@ public class StudentController {
     return "registerStudent";
   }
 
-
   @PostMapping("/registerStudent")
   //↓studentはregisterStudentの${student}の部分
-  public String registerStudent(@ModelAttribute StudentDetail studentDetail) {
-    return "";
+  public String registerStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) { //←バリデーションをしてくれる
+    if(result.hasErrors()){
+      return "registerStudent";
+    }
+    return "redirect:/studentList";
   }
-
 }
