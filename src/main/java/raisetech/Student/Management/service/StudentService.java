@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 import raisetech.Student.Management.data.Student;
 import raisetech.Student.Management.data.StudentCourses;
+import raisetech.Student.Management.domain.StudentDetail;
 import raisetech.Student.Management.repository.StudentRepository;
 
 @Service
@@ -28,8 +30,10 @@ public class StudentService {
     return repository.searchCourses();
   }
 
-  public void registerStudent(Student student) {
-    repository.insertStudent(student);
+  @Transactional
+  public void registerStudent(StudentDetail studentDetail) {
+    repository.insertStudent(studentDetail.getStudent());
+    // TODO:コース情報登録も行う
   }
 
 }
