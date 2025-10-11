@@ -1,6 +1,7 @@
 package raisetech.Student.Management.controller;
 
 
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -46,14 +47,17 @@ public class StudentController {
 
   @GetMapping("/newStudent")
   public String newStudent(Model model) {
-    model.addAttribute("studentDetail", new StudentDetail());
+    StudentDetail studentDetail = new StudentDetail();
+    studentDetail.setStudentCourses(Arrays.asList(new StudentCourses()));
+    model.addAttribute("studentDetail", studentDetail);
     return "registerStudent";
   }
 
   @PostMapping("/registerStudent")
   //↓studentはregisterStudentの${student}の部分
-  public String registerStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) { //←バリデーションをしてくれる
-    if(result.hasErrors()){
+  public String registerStudent(@ModelAttribute StudentDetail studentDetail,
+      BindingResult result) { //←バリデーションをしてくれる
+    if (result.hasErrors()) {
       return "registerStudent";
     }
     service.registerStudent(studentDetail);
