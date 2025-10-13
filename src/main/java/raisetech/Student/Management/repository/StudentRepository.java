@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import raisetech.Student.Management.data.Student;
 import raisetech.Student.Management.data.StudentCourses;
 
@@ -28,13 +29,30 @@ public interface StudentRepository {
   List<Student> search();
 
   @Select("SELECT * FROM students_courses")
-  List<StudentCourses> searchCourses();
+  List<StudentCourses> searchStundetsCoursesList();
+
+  @Select("SELECT * FROM student WHERE id = #{id}")
+  Student searchStudent(String id);
+
+  @Select("SELECT * FROM students_courses WHERE courses_ID = #{coursesId}")
+  List<StudentCourses> searchStudentsCourses(String coursesId);
 
   @Insert("INSERT INTO students (name, furigana, nickname, email_address, area, age, gender, remark, is_deleted)" +
       "VALUES (#{name}, #{furigana}, #{nickname}, #{emailAddress}, #{area}, #{age}, #{gender}, #{remark}, false)")
-
   @Options(useGeneratedKeys = true, keyProperty = "id")
   void insertStudent(Student student);
+
+  @Insert("INSERT INTO students_courses (student_id, course_name, start_date, scheduled_end_date)" +
+      "VALUES (#{studentId}, #{courseName}, #{startDate}, #{scheduledEndDate})")
+  @Options(useGeneratedKeys = true, keyProperty = "coursesId")
+  void insertStudentCourses(StudentCourses studentCourses);
+
+  @Update("UPDATE students SET(name = #{name}, furigana = #{furigana}, nickname = #{nickname}, emailAddress = #{emailAddress},"
+      + " area = #{area}, age = #{age}, gender = #{gender}, remark = #{remark}, is_deleted = #{isDeleted}) WHERE id = #{id}")
+  void updateStudent(Student student);
+
+  @Update("UPDATE students_courses SET(course_name = #{studentId} WHERE courses_ID = #{coursesId}")
+  void updateStudentCourses(StudentCourses studentCourses);
 }
 
 //複雑な処理はできない
