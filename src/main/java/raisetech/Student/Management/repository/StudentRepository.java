@@ -31,11 +31,11 @@ public interface StudentRepository {
   @Select("SELECT * FROM students_courses")
   List<StudentCourses> searchStundetsCoursesList();
 
-  @Select("SELECT * FROM student WHERE id = #{id}")
+  @Select("SELECT * FROM students WHERE id = #{id}")
   Student searchStudent(String id);
 
-  @Select("SELECT * FROM students_courses WHERE courses_ID = #{coursesId}")
-  List<StudentCourses> searchStudentsCourses(String coursesId);
+  @Select("SELECT * FROM students_courses WHERE student_id = #{studentId}")
+  List<StudentCourses> searchStudentsCourses(String studentId);
 
   @Insert("INSERT INTO students (name, furigana, nickname, email_address, area, age, gender, remark, is_deleted)" +
       "VALUES (#{name}, #{furigana}, #{nickname}, #{emailAddress}, #{area}, #{age}, #{gender}, #{remark}, false)")
@@ -47,11 +47,11 @@ public interface StudentRepository {
   @Options(useGeneratedKeys = true, keyProperty = "coursesId")
   void insertStudentCourses(StudentCourses studentCourses);
 
-  @Update("UPDATE students SET(name = #{name}, furigana = #{furigana}, nickname = #{nickname}, emailAddress = #{emailAddress},"
-      + " area = #{area}, age = #{age}, gender = #{gender}, remark = #{remark}, is_deleted = #{isDeleted}) WHERE id = #{id}")
+  @Update("UPDATE students SET name = #{name}, furigana = #{furigana}, nickname = #{nickname}, email_address = #{emailAddress},"
+      + " area = #{area}, age = #{age}, gender = #{gender}, remark = #{remark}, is_deleted = #{isDeleted} WHERE id = #{id}")
   void updateStudent(Student student);
 
-  @Update("UPDATE students_courses SET(course_name = #{studentId} WHERE courses_ID = #{coursesId}")
+  @Update("UPDATE students_courses SET course_name = #{courseName} WHERE courses_ID = #{coursesId}")
   void updateStudentCourses(StudentCourses studentCourses);
 }
 

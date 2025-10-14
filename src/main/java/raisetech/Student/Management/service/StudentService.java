@@ -54,9 +54,8 @@ public class StudentService {
   @Transactional
   public void updateStudent(StudentDetail studentDetail) {
     repository.updateStudent(studentDetail.getStudent());
-
     for (StudentCourses studentCourses : studentDetail.getStudentCourses()) {
-      repository.insertStudentCourses(studentCourses);
+      repository.updateStudentCourses(studentCourses);
     }
   }
 }

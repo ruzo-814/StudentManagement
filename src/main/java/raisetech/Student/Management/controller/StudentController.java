@@ -73,7 +73,6 @@ public class StudentController {
   }
 
   @PostMapping("/updateStudent")
-  //↓studentはregisterStudentの${student}の部分
   public String updateStudent(@ModelAttribute StudentDetail studentDetail,
       BindingResult result) { //←バリデーションをしてくれる
     if (result.hasErrors()) {
