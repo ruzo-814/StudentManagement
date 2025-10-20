@@ -2,11 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>受講生登録</title>
+  <title>受講生詳細</title>
 </head>
 <body>
-<h1>受講生登録</h1>
-<form th:action="@{/registerStudent}" th:object="${studentDetail}" method="post">
+<h1>受講生詳細</h1>
+<form th:action="@{/updateStudent}" th:object="${studentDetail}" method="post">
+
+  <div>
+    <label for="id">ID:<br></label>
+    <input type="text" id="id" th:field="*{student.id}" required/>
+  </div>
   <div>
     <label for="name">名前:<br></label>
     <!-- ↓*{student.name]の*は、${studentDetail}の略。${studentDetail}を指定している -->
@@ -30,22 +35,29 @@
   </div>
   <div>
     <label for="name">年齢:<br></label>
-    <input type="text" id="age" th:field="*{student.age}" />
+    <input type="text" id="age" th:field="*{student.age}"/>
   </div>
   <div>
     <label for="name">性別:<br></label>
-    <input type="text" id="gender" th:field="*{student.gender}" />
+    <input type="text" id="gender" th:field="*{student.gender}"/>
   </div>
   <div>
     <label for="name">備考:<br></label>
-    <input type="text" id="remark" th:field="*{student.remark}" />
+    <input type="text" id="remark" th:field="*{student.remark}"/>
   </div>
   <div th:each="course, stat : *{studentCourses}">
-    <label for="courseName" th:for="studentCourse.__${stat.index}__.courseName">受講コース名:<br></label>
-    <input type="text" id="courseName" th:id="studentCourse.__${stat.index}__.courseName" th:field="*{studentCourses[__${stat.index}__].courseName}" />
+    <label for="coursesId"
+           th:for="studentCourse.__${stat.index}__.coursesId">受講コースID:<br></label>
+    <input type="text" id="coursesId" th:id="studentCourse.__${stat.index}__.coursesId"
+           th:field="*{studentCourses[__${stat.index}__].coursesId}"/>
+    <br>
+    <label for="courseName"
+           th:for="studentCourse.__${stat.index}__.courseName">受講コース名:<br></label>
+    <input type="text" id="courseName" th:id="studentCourse.__${stat.index}__.courseName"
+           th:field="*{studentCourses[__${stat.index}__].courseName}"/>
   </div>
   <div>
-    <button type="submit">登録</button>
+    <button type="submit">更新</button>
   </div>
   <br><br>
 </form>
