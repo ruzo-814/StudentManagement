@@ -47,8 +47,8 @@ public interface StudentRepository {
   @Options(useGeneratedKeys = true, keyProperty = "coursesId")
   void insertStudentCourses(StudentCourses studentCourses);
 
-  @Update("UPDATE students SET name = #{name}, furigana = #{furigana}, nickname = #{nickname}, email_address = #{emailAddress},"
-      + " area = #{area}, age = #{age}, gender = #{gender}, remark = #{remark}, is_deleted = #{isDeleted} WHERE id = #{id}")
+  @Update("UPDATE students SET name = #{name}, furigana = #{furigana}, nickname = #{nickname}, email_address = #{emailAddress}, "
+      + "area = #{area}, age = #{age}, gender = #{gender}, remark = #{remark}, is_deleted = #{deleted} WHERE id = #{id}")
   void updateStudent(Student student);
 
   @Update("UPDATE students_courses SET course_name = #{courseName} WHERE courses_ID = #{coursesId}")
