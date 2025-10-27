@@ -47,22 +47,17 @@ public class StudentController {
 
 
   @GetMapping("/newStudent")
-  public String newStudent(Model model) {
+  public StudentDetail newStudent() {
     StudentDetail studentDetail = new StudentDetail();
     studentDetail.setStudentCourses(Arrays.asList(new StudentCourses()));
-    model.addAttribute("studentDetail", studentDetail);
-    return "registerStudent";
+    return studentDetail;
   }
 
   @PostMapping("/registerStudent")
   //↓studentはregisterStudentの${student}の部分
-  public String registerStudent(@ModelAttribute StudentDetail studentDetail,
-      BindingResult result) { //←バリデーションをしてくれる
-    if (result.hasErrors()) {
-      return "registerStudent";
-    }
+  public ResponseEntity<String> registerStudent(@RequestBody StudentDetail studentDetail) {
     service.registerStudent(studentDetail);
-    return "redirect:/studentList";
+    return ResponseEntity.ok("登録処理が成功しました。");
   }
 
   @PostMapping("/updateStudent")
