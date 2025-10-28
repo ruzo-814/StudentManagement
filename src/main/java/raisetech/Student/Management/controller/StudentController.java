@@ -1,7 +1,5 @@
 package raisetech.Student.Management.controller;
 
-
-import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,16 +38,7 @@ public class StudentController {
     return service.searchStudentCousesList();
   }
 
-
-  @GetMapping("/newStudent")
-  public StudentDetail newStudent() {
-    StudentDetail studentDetail = new StudentDetail();
-    studentDetail.setStudentCourses(Arrays.asList(new StudentCourses()));
-    return studentDetail;
-  }
-
   @PostMapping("/registerStudent")
-  //↓studentはregisterStudentの${student}の部分
   public ResponseEntity<String> registerStudent(@RequestBody StudentDetail studentDetail) {
     service.registerStudent(studentDetail);
     return ResponseEntity.ok("登録処理が成功しました。");
