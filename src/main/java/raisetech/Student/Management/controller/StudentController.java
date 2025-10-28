@@ -1,15 +1,10 @@
 package raisetech.Student.Management.controller;
 
 
-import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,25 +34,20 @@ public class StudentController {
     return converter.convertStudentDetails(students, studentCourses);
   }
 
+  @GetMapping("/student/{id}")
+  public StudentDetail getStudent(@PathVariable String id) {
+    return service.searchStudent(id);
+  }
 
   @GetMapping("/studentCoursesList")
   public List<StudentCourses> getStudentCousesList() {
     return service.searchStudentCousesList();
   }
 
-
-  @GetMapping("/newStudent")
-  public StudentDetail newStudent() {
-    StudentDetail studentDetail = new StudentDetail();
-    studentDetail.setStudentCourses(Arrays.asList(new StudentCourses()));
-    return studentDetail;
-  }
-
   @PostMapping("/registerStudent")
-  //↓studentはregisterStudentの${student}の部分
-  public ResponseEntity<String> registerStudent(@RequestBody StudentDetail studentDetail) {
-    service.registerStudent(studentDetail);
-    return ResponseEntity.ok("登録処理が成功しました。");
+  public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail studentDetail) {
+    StudentDetail responceStudentDetail = service.registerStudent(studentDetail);
+    return ResponseEntity.ok(responceStudentDetail);
   }
 
   @PostMapping("/updateStudent")

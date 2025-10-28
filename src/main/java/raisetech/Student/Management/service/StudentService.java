@@ -40,15 +40,15 @@ public class StudentService {
 
 
   @Transactional
-  public void registerStudent(StudentDetail studentDetail) {
+  public StudentDetail registerStudent(StudentDetail studentDetail) {
     repository.insertStudent(studentDetail.getStudent());
-
     for (StudentCourses studentCourses : studentDetail.getStudentCourses()) {
       studentCourses.setStudentId(studentDetail.getStudent().getId());
       studentCourses.setStartDate(LocalDateTime.now());
       studentCourses.setScheduledEndDate(LocalDateTime.now().plusYears(1));
       repository.insertStudentCourses(studentCourses);
     }
+    return studentDetail;// ← これがresponceStudentDetailに入る
   }
 
   @Transactional
