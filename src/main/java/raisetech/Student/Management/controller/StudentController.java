@@ -1,11 +1,17 @@
 package raisetech.Student.Management.controller;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/main
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+<<<<<<< HEAD
 import org.springframework.web.bind.annotation.PathVariable;
+=======
+>>>>>>> origin/main
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,6 +70,7 @@ public class StudentController {
     return service.searchStudentCousesList();
   }
 
+<<<<<<< HEAD
 
   /**
    * 新規受講生登録です。
@@ -75,6 +82,12 @@ public class StudentController {
   public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail studentDetail) {
     StudentDetail responceStudentDetail = service.registerStudent(studentDetail);
     return ResponseEntity.ok(responceStudentDetail);
+=======
+  @PostMapping("/registerStudent")
+  public ResponseEntity<String> registerStudent(@RequestBody StudentDetail studentDetail) {
+    service.registerStudent(studentDetail);
+    return ResponseEntity.ok("登録処理が成功しました。");
+>>>>>>> origin/main
   }
 
 
