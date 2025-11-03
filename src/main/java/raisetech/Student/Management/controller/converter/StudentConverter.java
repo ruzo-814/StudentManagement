@@ -15,6 +15,7 @@ import raisetech.Student.Management.domain.StudentDetail;
 @Component
 public class StudentConverter {
 
+
   /**
    * 受講生に紐づく受講生コース情報をマッピングします。
    * 受講生コース情報は受講生に対して複数存在するので、ループを回して受講生詳細情報を組み立てます。
