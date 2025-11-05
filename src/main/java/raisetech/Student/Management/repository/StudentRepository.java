@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import raisetech.Student.Management.data.Student;
-import raisetech.Student.Management.data.StudentCourses;
+import raisetech.Student.Management.data.StudentCourse;
 
 /**
  *受講生テーブルと受講生コース情報を紐づけるRepositoryです。
@@ -31,7 +31,7 @@ public interface StudentRepository {
    * @return 受講生コース情報一覧（全件）
    */
   @Select("SELECT * FROM students_courses")
-  List<StudentCourses> searchStundetsCoursesList();
+  List<StudentCourse> searchStundetCourseList();
 
 
   /**
@@ -51,11 +51,12 @@ public interface StudentRepository {
    * @return 受講生IDに紐づく受講生コース情報
    */
   @Select("SELECT * FROM students_courses WHERE student_id = #{studentId}")
-  List<StudentCourses> searchStudentsCourses(String studentId);
+  List<StudentCourse> searchStudentCourse(String studentId);
 
 
   /**
-   * 受講生の登録を行います。
+   * 受講生の新規登録を行います。
+   * IDに関しては自動採番を行います。
    *
    * @param student 受講生
    */
@@ -66,14 +67,14 @@ public interface StudentRepository {
 
 
   /**
-   * 受講コース情報の登録を行います。
+   * 受講コース情報の新規登録を行います。
    *
-   * @param studentCourses 受講コース情報
+   * @param studentCourse 受講コース情報
    */
   @Insert("INSERT INTO students_courses (student_id, course_name, start_date, scheduled_end_date)" +
       "VALUES (#{studentId}, #{courseName}, #{startDate}, #{scheduledEndDate})")
   @Options(useGeneratedKeys = true, keyProperty = "coursesId")
-  void insertStudentCourses(StudentCourses studentCourses);
+  void insertStudentCourse(StudentCourse studentCourse);
 
 
   /**
@@ -87,12 +88,12 @@ public interface StudentRepository {
 
 
   /**
-   * 受講生コース情報の更新を行います。
+   * 受講生コース情報のコース名の更新を行います。
    *
-   * @param studentCourses 受講コース情報
+   * @param studentCourse 受講コース情報
    */
   @Update("UPDATE students_courses SET course_name = #{courseName} WHERE courses_ID = #{coursesId}")
-  void updateStudentCourses(StudentCourses studentCourses);
+  void updateStudentCourse(StudentCourse studentCourse);
 }
 
 //複雑な処理はできない
