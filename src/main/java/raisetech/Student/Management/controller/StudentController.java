@@ -38,6 +38,7 @@ public class StudentController {
    *
    * @return 受講生一覧（全件）
    */
+
   @GetMapping("/studentList")
   public List<StudentDetail> getStudentList() throws TestException {
     throw new TestException(
@@ -91,4 +92,11 @@ public class StudentController {
     service.updateStudent(studentDetail);
     return ResponseEntity.ok("更新処理が成功しました。");
   }
+
+  @GetMapping("/testGetException")
+  public List<StudentDetail> testGetException() throws TestException {
+    throw new TestException(
+        "現在このAPIは利用できません。URLは「studentList」ではなく「students」を利用してください。");
+  }
+
 }
