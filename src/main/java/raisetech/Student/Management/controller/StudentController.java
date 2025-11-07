@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
-import raisetech.student.management.exception.GetIdTestException;
-import raisetech.student.management.exception.GetTestException;
-import raisetech.student.management.exception.PostTestException;
+import raisetech.student.management.exception.TestIdSearchException;
+import raisetech.student.management.exception.TestSearchException;
+import raisetech.student.management.exception.TestRegisterException;
 import raisetech.student.management.service.StudentService;
 
 /**
@@ -96,11 +96,11 @@ public class StudentController {
    * 受講生一覧検索の例外処理用のメソッドです。
    *
    * @return 入力されたURLが間違っていた場合の例外処理
-   * @throws GetTestException
+   * @throws TestSearchException
    */
   @GetMapping("/testSearchException")
-  public List<StudentDetail> tsetSearchException() throws GetTestException {
-    throw new GetTestException(
+  public List<StudentDetail> testSearchException() throws TestSearchException {
+    throw new TestSearchException(
         "現在このAPIは利用できません。URLは「studentList」ではなく「students」を利用してください。");
   }
 
@@ -109,11 +109,11 @@ public class StudentController {
    * 受講生検索の例外処理用のメソッドです。
    *
    * @return 入力されたユーザーIDが論理削除されていた場合の例外処理
-   * @throws GetIdTestException
+   * @throws TestIdSearchException
    */
   @GetMapping("/testIdSearchException")
-  public List<StudentDetail> testIdSearchException() throws GetIdTestException {
-    throw new GetIdTestException(
+  public List<StudentDetail> testIdSearchException() throws TestIdSearchException {
+    throw new TestIdSearchException(
         "[ID:〇〇]入力されたユーザーIDは退会済みです。");
   }
 
@@ -122,11 +122,11 @@ public class StudentController {
    * 新規受講生登録の例外処理用のメソッドです。
    *
    * @return 入力された内容がバリデーションに引っかかった場合の例外処理
-   * @throws PostTestException
+   * @throws TestRegisterException
    */
   @PostMapping("/RegisterException")
-  public ResponseEntity<StudentDetail> testRegisterException() throws PostTestException {
-    throw new PostTestException("性別は[male/female/other]の中から一つを入力してください。");
+  public ResponseEntity<StudentDetail> testRegisterException() throws TestRegisterException {
+    throw new TestRegisterException("性別は[male/female/other]の中から一つを入力してください。");
   }
 
 }

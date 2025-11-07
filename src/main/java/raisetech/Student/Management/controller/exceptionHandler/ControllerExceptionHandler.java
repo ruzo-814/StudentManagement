@@ -4,9 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import raisetech.student.management.exception.GetIdTestException;
-import raisetech.student.management.exception.GetTestException;
-import raisetech.student.management.exception.PostTestException;
+import raisetech.student.management.exception.TestIdSearchException;
+import raisetech.student.management.exception.TestSearchException;
+import raisetech.student.management.exception.TestRegisterException;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
@@ -18,8 +18,8 @@ public class ControllerExceptionHandler {
    * @param ex 無効なURL
    * @return 入力されたURLが間違っていた場合の例外処理
    */
-  @ExceptionHandler(GetTestException.class)
-  public ResponseEntity<String> getTestException(GetTestException ex) {
+  @ExceptionHandler(TestSearchException.class)
+  public ResponseEntity<String> getTestException(TestSearchException ex) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
   }
 
@@ -30,8 +30,8 @@ public class ControllerExceptionHandler {
    * @param ex 論理削除されたユーザーID
    * @return 入力されたユーザーIDが論理削除されていた場合の例外処理
    */
-  @ExceptionHandler(GetIdTestException.class)
-  public  ResponseEntity<String> getIdTestException(GetIdTestException ex){
+  @ExceptionHandler(TestIdSearchException.class)
+  public  ResponseEntity<String> getIdTestException(TestIdSearchException ex){
     return  ResponseEntity.status(HttpStatus.GONE).body(ex.getMessage());
   }
 
@@ -42,8 +42,8 @@ public class ControllerExceptionHandler {
    * @param ex gender入力欄での[male/female/other]以外の入力
    * @return 入力された内容がバリデーションに引っかかった場合の例外処理
    */
-  @ExceptionHandler(PostTestException.class)
-  public ResponseEntity<String> postTestException(PostTestException ex) {
+  @ExceptionHandler(TestRegisterException.class)
+  public ResponseEntity<String> postTestException(TestRegisterException ex) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
   }
 }
