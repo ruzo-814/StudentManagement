@@ -4,10 +4,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
-import raisetech.student.management.exception.TestException;
+import raisetech.student.management.exception.GetIdTestException;
+import raisetech.student.management.exception.GetTestException;
+import raisetech.student.management.exception.PostTestException;
 import raisetech.student.management.service.StudentService;
 
 /**
@@ -38,11 +38,9 @@ public class StudentController {
    *
    * @return 受講生一覧（全件）
    */
-
   @GetMapping("/studentList")
-  public List<StudentDetail> getStudentList() throws TestException {
-    throw new TestException(
-        "現在このAPIは利用できません。URLは「studentList」ではなく「students」を利用してください。");
+  public List<StudentDetail> getStudentList() {
+    return service.searchStudentList();
   }
 
   /**
@@ -93,10 +91,42 @@ public class StudentController {
     return ResponseEntity.ok("更新処理が成功しました。");
   }
 
-  @GetMapping("/testGetException")
-  public List<StudentDetail> testGetException() throws TestException {
-    throw new TestException(
+
+  /**
+   * 受講生一覧検索の例外処理用のメソッドです。
+   *
+   * @return 入力されたURLが間違っていた場合の例外処理
+   * @throws GetTestException
+   */
+  @GetMapping("/testSearchException")
+  public List<StudentDetail> tsetSearchException() throws GetTestException {
+    throw new GetTestException(
         "現在このAPIは利用できません。URLは「studentList」ではなく「students」を利用してください。");
+  }
+
+
+  /**
+   * 受講生検索の例外処理用のメソッドです。
+   *
+   * @return 入力されたユーザーIDが論理削除されていた場合の例外処理
+   * @throws GetIdTestException
+   */
+  @GetMapping("/testIdSearchException")
+  public List<StudentDetail> testIdSearchException() throws GetIdTestException {
+    throw new GetIdTestException(
+        "[ID:〇〇]入力されたユーザーIDは退会済みです。");
+  }
+
+
+  /**
+   * 新規受講生登録の例外処理用のメソッドです。
+   *
+   * @return 入力された内容がバリデーションに引っかかった場合の例外処理
+   * @throws PostTestException
+   */
+  @PostMapping("/RegisterException")
+  public ResponseEntity<StudentDetail> testRegisterException() throws PostTestException {
+    throw new PostTestException("性別は[male/female/other]の中から一つを入力してください。");
   }
 
 }
