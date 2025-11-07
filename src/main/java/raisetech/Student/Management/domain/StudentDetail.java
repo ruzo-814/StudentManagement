@@ -1,13 +1,13 @@
-package raisetech.Student.Management.domain;
+package raisetech.student.management.domain;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import raisetech.Student.Management.data.Student;
-import raisetech.Student.Management.data.StudentCourses;
+import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
 
 @Getter
 @Setter
@@ -15,7 +15,10 @@ import raisetech.Student.Management.data.StudentCourses;
 @AllArgsConstructor
 public class StudentDetail {
 
+  @Valid
   private Student student;
-  private List<StudentCourses> studentCourses;
+
+  @Valid
+  private List<StudentCourse> studentCourseList;
 
 }
