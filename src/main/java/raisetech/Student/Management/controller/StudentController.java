@@ -1,5 +1,10 @@
 package raisetech.student.management.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import java.util.List;
@@ -12,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.exception.TestIdSearchException;
@@ -38,6 +44,17 @@ public class StudentController {
    *
    * @return 受講生一覧（全件）
    */
+  @Operation(summary = "一覧検索",
+      description = "受講生の一覧を検索します。",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "受講生一覧を表示します。",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = Student.class))),
+          @ApiResponse(responseCode = "400", description = "URLが間違っています。"),}
+  )
   @GetMapping("/studentList")
   public List<StudentDetail> getStudentList() {
     return service.searchStudentList();
@@ -49,6 +66,19 @@ public class StudentController {
    * @param id 受講生ID
    * @return 受講生
    */
+  @Operation(summary = "受講生ID検索",
+      description = "指定したIDの受講生を検索します。",
+      parameters = {@Parameter(name = "id", description = "受講生ID（例：20）", required = true)
+      },
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "指定したIDの受講生情報を表示します。",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = StudentDetail.class))),
+          @ApiResponse(responseCode = "404", description = "指定したIDの受講生が存在しません。"),}
+  )
   @GetMapping("/student/{id}")
   public StudentDetail getStudent(@PathVariable @Size(min = 1, max = 3) String id) {
     return service.searchStudent(id);
@@ -59,6 +89,16 @@ public class StudentController {
    *
    * @return 受講コース情報一覧（全件）
    */
+  @Operation(summary = "コース一覧検索",
+      description = "コース情報の一覧を検索します。",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "コース情報の一覧を表示します。",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = StudentCourse.class))),
+          @ApiResponse(responseCode = "400", description = "URLが間違っています。"),})
   @GetMapping("/studentCoursesList")
   public List<StudentCourse> getStudentCousesList() {
     return service.searchStudentCousesList();
@@ -70,6 +110,21 @@ public class StudentController {
    * @param studentDetail 受講生詳細情報
    * @return 実行結果
    */
+  @Operation(summary = "受講生登録",
+      description = "新規受講生を登録します。",
+      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "登録する受講生情報（IDは不要）",
+          content = @Content(schema = @Schema(implementation = StudentDetail.class))
+      ),
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "登録した受講生情報を表示します。",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = StudentDetail.class))),
+          @ApiResponse(responseCode = "400", description = "不正な入力値です。"),}
+  )
   @PostMapping("/registerStudent")
   public ResponseEntity<StudentDetail> registerStudent(
       @RequestBody @Valid StudentDetail studentDetail) {
@@ -83,6 +138,22 @@ public class StudentController {
    * @param studentDetail 受講生詳細情報
    * @return 実行結果
    */
+  @Operation(summary = "受講生情報更新",
+      description = "受講生の登録情報を更新します。",
+      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "登録する受講生情報（IDは不要）",
+          content = @Content(schema = @Schema(implementation = StudentDetail.class))),
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "更新後の受講生情報を表示します。",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = StudentDetail.class)
+              )
+          ),
+          @ApiResponse(responseCode = "400", description = "不正な入力値です。")}
+  )
   @PutMapping("/updateStudent")
   // PutMapping = 全体的な更新
   // PatchMapping = 部分的な更新
@@ -98,6 +169,8 @@ public class StudentController {
    * @return 入力されたURLが間違っていた場合の例外処理
    * @throws TestSearchException
    */
+  @Operation(summary = "一覧検索例外処理",
+      description = "入力した一覧検索のURLが間違っていた場合の例外処理を実行します。")
   @GetMapping("/testSearchException")
   public List<StudentDetail> testSearchException() throws TestSearchException {
     throw new TestSearchException(
@@ -111,6 +184,8 @@ public class StudentController {
    * @return 入力されたユーザーIDが論理削除されていた場合の例外処理
    * @throws TestIdSearchException
    */
+  @Operation(summary = "ID検索例外処理",
+      description = "指定したIDが論理削除されていた場合の例外処理を実行します。")
   @GetMapping("/testIdSearchException")
   public List<StudentDetail> testIdSearchException() throws TestIdSearchException {
     throw new TestIdSearchException(
@@ -124,6 +199,8 @@ public class StudentController {
    * @return 入力された内容がバリデーションに引っかかった場合の例外処理
    * @throws TestRegisterException
    */
+  @Operation(summary = "受講生登録例外処理",
+      description = "新規受講生を登録する際の性別欄の入力がバリデーションに引っかかった場合の例外処理を実行します。")
   @PostMapping("/RegisterException")
   public ResponseEntity<StudentDetail> testRegisterException() throws TestRegisterException {
     throw new TestRegisterException("性別は[male/female/other]の中から一つを入力してください。");
