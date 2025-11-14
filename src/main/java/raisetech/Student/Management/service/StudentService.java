@@ -38,7 +38,7 @@ public class StudentService {
    */
   public List<StudentDetail> searchStudentList() {
     List<Student> studentList = repository.search();
-    List<StudentCourse> studentCourseList = repository.searchStundetCourseList();
+    List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
     return converter.convertStudentDetails(studentList, studentCourseList);
   }
 
@@ -50,7 +50,7 @@ public class StudentService {
    * @return 受講コース情報一覧（全件）
    */
   public List<StudentCourse> searchStudentCousesList() {
-    return repository.searchStundetCourseList();
+    return repository.searchStudentCourseList();
   }
 
 
