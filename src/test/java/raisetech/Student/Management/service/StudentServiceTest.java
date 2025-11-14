@@ -1,4 +1,4 @@
-package raisetech.Student.Management.service;
+package raisetech.student.management.service;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -28,6 +29,13 @@ class StudentServiceTest {
   @Mock
   private StudentConverter converter;
 
+  private StudentService sut;
+
+  @BeforeEach
+  void before(){
+    sut = new StudentService(repository, converter);
+  }
+
   @Test
   void 受講生詳細の一覧検索_リポジトリとコンバーターの処理が適切に呼び出せていること() {
     //事前準備
@@ -39,7 +47,6 @@ class StudentServiceTest {
     when(repository.searchStudentCourseList()).thenReturn(studentCourseList);
 
     //実行
-//    List<StudentDetail> actual = sut.searchStudentList();
    sut.searchStudentList();
 
     //検証
