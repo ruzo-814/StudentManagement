@@ -5,8 +5,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -100,6 +102,23 @@ class StudentServiceTest {
     verify(repository, times(1)).insertStudentCourse(studentCourse);
 
     //後処理
+  }
+
+
+  @Test
+  void 受講生詳細の登録_初期化処理が行われること(){
+    String id = "999";
+    Student student = new Student();
+    student.setId(id);
+    StudentCourse studentCourse = new StudentCourse();
+
+    sut.initStudentsCourse(studentCourse, student.getId());
+
+    Assertions.assertEquals(id, studentCourse.getStudentId());
+    Assertions.assertEquals(LocalDateTime.now().getHour(),
+        studentCourse.getStartDate().getHour());
+    Assertions.assertEquals(LocalDateTime.now().plusYears(1).getYear(),
+        studentCourse.getScheduledEndDate().getYear());
   }
 
 
