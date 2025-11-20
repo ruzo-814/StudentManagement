@@ -25,7 +25,7 @@ public interface StudentRepository {
    *
    * @return 受講生コース情報一覧（全件）
    */
-  List<StudentCourse> searchStundetCourseList();
+  List<StudentCourse> searchStudentCourseList();
 
 
   /**
