@@ -32,7 +32,7 @@ public class Student {
   private String nickname;
 
   @Schema(description = "メールアドレスを入力してください。", example = "taro@example.com")
-  @NotBlank @Email
+  @NotBlank @Email(message = "メールアドレスを入力してください。")
   private String emailAddress;
 
   @Schema(description = "済んでいる都市名を入力してください。", example = "東京")
@@ -44,7 +44,7 @@ public class Student {
   private int age;
 
   @Schema(description = "性別を[male/female/other]の中から入力してください。", example = "male")
-  @NotBlank  @Pattern(regexp = "^(male|female|other)$", message = "male/female/otherの中から入力してください")
+  @NotBlank  @Pattern(regexp = "^(male|female|other)$", message = "male/female/otherの中から入力してください。")
   private String gender;
 
   private String remark;
