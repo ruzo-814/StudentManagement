@@ -51,7 +51,7 @@ class StudentControllerTest {
 
 
   @Test
-  void 受講生詳細のID検索が実行できて空のリストが返ってくること() throws Exception {
+  void 受講生詳細のID検索が実行できてID検索した受講生詳細が返ってくること() throws Exception {
 
     Student student = new Student();
     student.setId("1");
