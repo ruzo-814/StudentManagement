@@ -17,6 +17,10 @@ class StudentConverterTest {
     List<Student> studentList = new ArrayList<>();
     List<StudentCourse> studentCourseList = new ArrayList<>();
 
+    Student student = new Student();
+    student.setId("1");
+    student.setName("John Miller");
+
     StudentDetail studentDetail = new StudentDetail();
     studentDetail.setStudent(student);
     studentDetail.setStudentCourseList(List.of(course));
