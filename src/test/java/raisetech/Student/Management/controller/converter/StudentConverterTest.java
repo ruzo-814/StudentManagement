@@ -1,0 +1,21 @@
+package raisetech.student.management.controller.converter;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import raisetech.student.management.controller.StudentController;
+import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
+
+@WebMvcTest(StudentConverter.class)
+class StudentConverterTest {
+
+  void 受講生と受講コース情報が紐づけられ受講生詳細となっていること(){
+    List<Student> studentList = new ArrayList<>();
+    List<StudentCourse> studentCourseList = new ArrayList<>();
+
+  }
+
+}
