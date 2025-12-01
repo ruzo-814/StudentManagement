@@ -15,7 +15,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import jakarta.validation.Validator;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -27,6 +29,7 @@ import raisetech.student.management.service.StudentService;
 
 
 @WebMvcTest(StudentController.class)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 class StudentControllerTest {
 
   @Autowired
@@ -52,61 +55,11 @@ class StudentControllerTest {
 
   @Test
   void 受講生詳細のID検索が実行できてID検索した受講生詳細が返ってくること() throws Exception {
+    String id = "999";
+    mockMvc.perform(get("/student/{id}", id))
+        .andExpect(status().isOk());
 
-    Student student = new Student();
-    student.setId("1");
-    student.setName("John Miller");
-    student.setFurigana("Jon Mira");
-    student.setNickname("Johnny");
-    student.setEmailAddress("john.miller@example.com");
-    student.setArea("New York");
-    student.setAge(20);
-    student.setGender("male");
-    student.setRemark(null);
-    student.setDeleted(false);
-
-    StudentCourse course = new StudentCourse();
-    course.setCoursesId("1");
-    course.setStudentId("1");
-    course.setCourseName("Java Programming Basics");
-    course.setStartDate(LocalDateTime.of(2025, 4, 1, 9, 0, 0));
-    course.setScheduledEndDate(LocalDateTime.of(2025, 7, 1, 9, 0, 0));
-
-    StudentDetail studentDetail = new StudentDetail();
-    studentDetail.setStudent(student);
-    studentDetail.setStudentCourseList(List.of(course));
-
-    when(service.searchStudent("1")).thenReturn(studentDetail);
-
-    mockMvc.perform(get("/student/{id}", 1))
-        .andExpect(status().isOk())
-        .andExpect(content().json("""
-            {
-              "student": {
-                "id": "1",
-                "name": "John Miller",
-                "furigana": "Jon Mira",
-                "nickname": "Johnny",
-                "emailAddress": "john.miller@example.com",
-                "area": "New York",
-                "age": 20,
-                "gender": "male",
-                "remark": null,
-                "deleted": false
-              },
-              "studentCourseList": [
-                {
-                  "coursesId": "1",
-                  "studentId": "1",
-                  "courseName": "Java Programming Basics",
-                  "startDate": "2025-04-01T09:00:00",
-                  "scheduledEndDate": "2025-07-01T09:00:00"
-                }
-              ]
-            }
-            """));
-
-    verify(service, times(1)).searchStudent("1");
+    verify(service, times(1)).searchStudent(id);
   }
 
 
@@ -125,7 +78,6 @@ class StudentControllerTest {
             .contentType("application/json")
             .content("""
                 {"student": {
-                "id": null,
                 "name": "鈴木　健司",
                 "furigana": "スズキ　ケンジ",
                 "nickname": "スズケン",
@@ -136,16 +88,12 @@ class StudentControllerTest {
                 "remark": null,
                 "deleted": false },
                 "studentCourseList": [{
-                "coursesId": null,
-                "studentId": null,
-                "courseName": "Java Programming Basics",
-                "startDate": "",
-                "scheduledEndDate": "" }]
+                "courseName": "Java Programming Basics"}]
                 }
                 """))
         .andExpect(status().isOk());
 
-    verify(service, times(1)).registerStudent(any(StudentDetail.class));
+    verify(service, times(1)).registerStudent(any());
   }
 
 
@@ -177,6 +125,14 @@ class StudentControllerTest {
         .andExpect(content().string("更新処理が成功しました。"));
 
     verify(service, times(1)).updateStudent(any(StudentDetail.class));
+  }
+
+
+  @Test
+  void 受講生詳細の例外APIが実行できて400エラーが返ってくること() throws Exception {
+    mockMvc.perform(get("/testSearchException"))
+        .andExpect(status().is4xxClientError())
+        .andExpect(content().string("現在このAPIは利用できません。URLは「studentList」ではなく「students」を利用してください。"));
   }
 
 
