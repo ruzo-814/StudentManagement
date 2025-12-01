@@ -6,12 +6,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Schema(description = "受講生")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 
 public class Student {
 
@@ -51,4 +55,4 @@ public class Student {
 
   private boolean isDeleted;
 
-}
+  }

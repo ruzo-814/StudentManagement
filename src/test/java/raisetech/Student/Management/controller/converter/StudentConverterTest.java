@@ -25,23 +25,22 @@ class StudentConverterTest {
   @Test
   void 受講生リストとコース情報リストが紐づけられ受講生詳細リストとなっていること() {
     //事前準備
-    Student student1 = getStudent1();
+    Student student1 = generateStudent("1", "John Miller", "Jon Mira", "Johnny",
+        "john.miller@example.com", "New York", 20, "male", null, false);
 
-    Student student2 = getStudent2();
+    Student student2 = generateStudent("2", "Emily Johnson", "Emiri Jonson", "Emi",
+        "emily.johnson@example.com", "Los Angeles", 19, "female", null, false);
 
-    StudentCourse studentCourse1 = new StudentCourse();
-    studentCourse1.setCoursesId("1");
-    studentCourse1.setStudentId("1");
-    studentCourse1.setCourseName("Java Programming Basics");
-    studentCourse1.setStartDate(LocalDateTime.of(2025, 4, 1, 9, 0, 0));
-    studentCourse1.setScheduledEndDate(LocalDateTime.of(2025, 7, 1, 9, 0, 0));
+    StudentCourse studentCourse1 = generateStudentCourse("1", "1",
+        "Java Programming Basics",
+        LocalDateTime.of(2025, 4, 1, 9, 0, 0),
+        LocalDateTime.of(2025, 7, 1, 9, 0, 0));
 
-    StudentCourse studentCourse2 = new StudentCourse();
-    studentCourse2.setCoursesId("2");
-    studentCourse2.setStudentId("2");
-    studentCourse2.setCourseName("Web Development with HTML");
-    studentCourse2.setStartDate(LocalDateTime.of(2025, 4, 1, 9, 0, 0));
-    studentCourse2.setScheduledEndDate(LocalDateTime.of(2025, 7, 1, 9, 0, 0));
+
+    StudentCourse studentCourse2 = generateStudentCourse("2", "2",
+        "Web Development with HTML",
+        LocalDateTime.of(2025, 4, 1, 9, 0, 0),
+        LocalDateTime.of(2025, 7, 1, 9, 0, 0));
 
     List<Student> studentList = new ArrayList<>();
     studentList.add(student1);
@@ -63,16 +62,16 @@ class StudentConverterTest {
   @Test
   void コース情報が存在しない受講生であっても受講生詳細が作られること() {
     //事前準備
-    Student student1 = getStudent1();
+    Student student1 = generateStudent("1", "John Miller", "Jon Mira", "Johnny",
+        "john.miller@example.com", "New York", 20, "male", null, false);
 
-    Student student2 = getStudent2();
+    Student student2 = generateStudent("2", "Emily Johnson", "Emiri Jonson", "Emi",
+        "emily.johnson@example.com", "Los Angeles", 19, "female", null, false);
 
-    StudentCourse studentCourse1 = new StudentCourse();
-    studentCourse1.setCoursesId("1");
-    studentCourse1.setStudentId("1");
-    studentCourse1.setCourseName("Java Programming Basics");
-    studentCourse1.setStartDate(LocalDateTime.of(2025, 4, 1, 9, 0, 0));
-    studentCourse1.setScheduledEndDate(LocalDateTime.of(2025, 7, 1, 9, 0, 0));
+    StudentCourse studentCourse1 = generateStudentCourse("1", "1",
+        "Java Programming Basics",
+        LocalDateTime.of(2025, 4, 1, 9, 0, 0),
+        LocalDateTime.of(2025, 7, 1, 9, 0, 0));
 
     List<Student> studentList = new ArrayList<>();
     studentList.add(student1);
@@ -94,34 +93,46 @@ class StudentConverterTest {
 
   }
 
-  private static Student getStudent2() {
-    Student student2 = new Student();
-    student2.setId("2");
-    student2.setName("Emily Johnson");
-    student2.setFurigana("Emiri Jonson");
-    student2.setNickname("Emi");
-    student2.setEmailAddress("emily.johnson@example.com");
-    student2.setArea("Los Angeles");
-    student2.setAge(19);
-    student2.setGender("female");
-    student2.setRemark(null);
-    student2.setDeleted(false);
-    return student2;
+
+  private static Student generateStudent(
+      String id,
+      String name,
+      String furigana,
+      String nickname,
+      String emailAddress,
+      String area,
+      int age,
+      String gender,
+      String remark,
+      boolean isDeleted
+  ) {
+    return new Student(
+        id,
+        name,
+        furigana,
+        nickname,
+        emailAddress,
+        area,
+        age,
+        gender,
+        remark,
+        isDeleted
+    );
   }
 
-  private static Student getStudent1() {
-    Student student1 = new Student();
-    student1.setId("1");
-    student1.setName("John Miller");
-    student1.setFurigana("Jon Mira");
-    student1.setNickname("Johnny");
-    student1.setEmailAddress("john.miller@example.com");
-    student1.setArea("New York");
-    student1.setAge(20);
-    student1.setGender("male");
-    student1.setRemark(null);
-    student1.setDeleted(false);
-    return student1;
+  private static StudentCourse generateStudentCourse(
+      String coursesId,
+      String studentId,
+      String courseName,
+      LocalDateTime startDate,
+      LocalDateTime scheduledEndDate
+  ) {
+    return new StudentCourse(
+        coursesId,
+        studentId,
+        courseName,
+        startDate,
+        scheduledEndDate
+    );
   }
-
 }
