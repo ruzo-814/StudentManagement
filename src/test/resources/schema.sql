@@ -14,7 +14,7 @@ is_deleted boolean
 
 CREATE TABLE IF NOT EXISTS students_courses
 (
-course_ID INT AUTO_INCREMENT PRIMARY KEY ,
+courses_ID INT AUTO_INCREMENT PRIMARY KEY ,
 student_id INT NOT NULL,
 course_name varchar(100) NOT NULL,
 start_date TIMESTAMP,
