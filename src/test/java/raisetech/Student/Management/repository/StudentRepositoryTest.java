@@ -18,9 +18,23 @@ class StudentRepositoryTest {
 
   @Test
   void 受講生の全件検索が行えること() {
+    List<Student> expected = List.of(
+        new Student("1", "John Miller", "Jon Mira", "Johnny",
+            "john.miller@example.com", "New York", 20, "male", null, false),
+        new Student("2", "Emily Johnson", "Emiri Jonson", "Em",
+            "emily.johnson@example.com", "Los Angeles", 19, "female", null, false),
+        new Student("3", "Michael Brown", "Maikeru Buraun", "Mike",
+            "michael.brown@example.com", "Chicago", 22, "male", null, false),
+        new Student("4", "Sophia Davis", "Sofia Deibisu", "Sophie",
+            "sophia.davis@example.com", "Houston", 18, "female", null, false),
+        new Student("5", "Alex Smith", "Arekkusu Sumisu", "Alex",
+            "alex.smith@example.com", "Seattle", 21, "other", null, false)
+    );
+
     List<Student> actual = sut.search();
 
     assertThat(actual.size()).isEqualTo(5);
+    assertThat(actual).isEqualTo(expected);
   }
 
 
@@ -74,25 +88,22 @@ class StudentRepositoryTest {
 
   @Test
   void 受講生情報を更新できること() {
-    Student student = testStudent();
-    student.setId("2");
-    student.setName("田中桃子");
-    student.setFurigana("タナカモモコ");
-    student.setNickname("モモコ");
-    student.setEmailAddress("tanamomo@example.com");
+    Student updateStudent = testStudent();
+    updateStudent.setId("2");
+    updateStudent.setName("田中桃子");
+    updateStudent.setFurigana("タナカモモコ");
+    updateStudent.setNickname("モモコ");
+    updateStudent.setEmailAddress("tanamomo@example.com");
 
-    sut.updateStudent(student);
+    sut.updateStudent(updateStudent);
     Student actual = sut.searchStudent("2");
 
-    assertThat(actual.getName()).isEqualTo("田中桃子");
-    assertThat(actual.getFurigana()).isEqualTo("タナカモモコ");
-    assertThat(actual.getNickname()).isEqualTo("モモコ");
-    assertThat(actual.getEmailAddress()).isEqualTo("tanamomo@example.com");
+    assertThat(actual).isEqualTo(updateStudent);
   }
 
 
   @Test
-  void 受講生のコース情報を更新できること(){
+  void 受講生のコース情報を更新できること() {
     StudentCourse studentCourse = testStudentCourse();
     studentCourse.setCoursesId("5");
     studentCourse.setCourseName("Javaエンジニアスタンダードコース");
