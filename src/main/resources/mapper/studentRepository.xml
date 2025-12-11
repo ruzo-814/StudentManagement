@@ -4,9 +4,62 @@
 <mapper namespace="raisetech.student.management.repository.StudentRepository">
 
   <!-- 受講生の全件検索を行います -->
-<select id="search" resultType="raisetech.student.management.data.Student">
-  SELECT * FROM students WHERE is_deleted = false
-</select>
+  <select id="search" resultType="raisetech.student.management.data.Student">
+    SELECT * FROM students WHERE is_deleted = false
+  </select>
+
+
+  <select id="searchByCondition" resultType="raisetech.student.management.data.Student">
+    SELECT
+    ID,
+    name,
+    furigana,
+    nickname,
+    email_address,
+    area,
+    age,
+    gender,
+    remark,
+    is_deleted
+    FROM students
+    <where>
+      <if test="isDeleted == null">
+        AND is_deleted = false
+      </if>
+
+      <if test="name != null and name != ''">
+        AND name LIKE CONCAT('%', #{name}, '%')
+      </if>
+
+      <if test="furigana != null and furigana != ''">
+        AND furigana LIKE CONCAT('%', #{furigana}, '%')
+      </if>
+
+      <if test="nickname != null and nickname != ''">
+        AND nickname LIKE CONCAT('%', #{nickname}, '%')
+      </if>
+
+      <if test="emailAddress != null and emailAddress != ''">
+        AND email_address LIKE CONCAT('%', #{emailAddress}, '%')
+      </if>
+
+      <if test="age != null">
+        AND age = #{age}
+      </if>
+
+      <if test="area != null and area != ''">
+        AND area = #{area}
+      </if>
+
+      <if test="gender != null and gender != ''">
+        AND gender = #{gender}
+      </if>
+
+      <if test="isDeleted != null">
+        AND is_deleted = #{isDeleted}
+      </if>
+    </where>
+  </select>
 
 
   <!-- 受講生コース情報の全件検索を行います -->
@@ -29,8 +82,10 @@
 
   <!-- 受講生の新規登録を行います。IDに関しては自動採番を行います -->
   <insert id="insertStudent" parameterType="raisetech.student.management.data.Student">
-    INSERT INTO students (name, furigana, nickname, email_address, area, age, gender, remark, is_deleted)
-    VALUES (#{name}, #{furigana}, #{nickname}, #{emailAddress}, #{area}, #{age}, #{gender}, #{remark}, false)
+    INSERT INTO students (name, furigana, nickname, email_address, area, age, gender, remark,
+    is_deleted)
+    VALUES (#{name}, #{furigana}, #{nickname}, #{emailAddress}, #{area}, #{age}, #{gender},
+    #{remark}, false)
   </insert>
 
 
@@ -43,8 +98,10 @@
 
   <!-- 受講生情報の更新を行います -->
   <update id="updateStudent" parameterType="raisetech.student.management.data.Student">
-    UPDATE students SET name = #{name}, furigana = #{furigana}, nickname = #{nickname}, email_address = #{emailAddress},
-    area = #{area}, age = #{age}, gender = #{gender}, remark = #{remark}, is_deleted = #{deleted} WHERE id = #{id}
+    UPDATE students SET name = #{name}, furigana = #{furigana}, nickname = #{nickname},
+    email_address = #{emailAddress},
+    area = #{area}, age = #{age}, gender = #{gender}, remark = #{remark}, is_deleted = #{deleted}
+    WHERE id = #{id}
   </update>
 
 
