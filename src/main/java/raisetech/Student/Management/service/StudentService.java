@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import raisetech.student.management.controller.converter.StudentConverter;
+import raisetech.student.management.controller.request.StudentSearchCondition;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
@@ -32,14 +33,20 @@ public class StudentService {
 
   /**
    * 受講生詳細一覧検索です。
-   * 全件検索を行うので、条件指定は行いません。
+   * 条件が空の場合、全件検索を行います
    *
    * @return 受講生一覧（全件）
    */
-  public List<StudentDetail> searchStudentList() {
-    List<Student> studentList = repository.search();
-    List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
-    return converter.convertStudentDetails(studentList, studentCourseList);
+  public List<StudentDetail> searchStudentList(StudentSearchCondition condition) {
+    if (condition.isEmpty()) {
+      List<Student> studentList = repository.search();
+      List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
+      return converter.convertStudentDetails(studentList, studentCourseList);
+    } else {
+      List<Student> studentList = repository.searchByCondition(condition);
+      List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
+      return converter.convertStudentDetails(studentList, studentCourseList);
+    }
   }
 
 

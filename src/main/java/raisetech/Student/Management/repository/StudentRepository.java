@@ -2,6 +2,7 @@ package raisetech.student.management.repository;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import raisetech.student.management.controller.request.StudentSearchCondition;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 
@@ -18,6 +19,14 @@ public interface StudentRepository {
    * @return 受講生一覧（全件）
    */
   List<Student> search();
+
+
+  /**
+   * 受講生の全件検索（条件任意）を行います
+   * @param condition 検索条件
+   * @return 受講生
+   */
+  List<Student> searchByCondition(StudentSearchCondition condition);
 
 
   /**

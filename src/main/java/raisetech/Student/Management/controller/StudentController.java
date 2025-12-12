@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import raisetech.student.management.controller.request.StudentSearchCondition;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
@@ -40,7 +41,7 @@ public class StudentController {
   }
 
   /**
-   * 受講生一覧検索です。 全件検索を行うので、条件指定は行いません。
+   * 受講生一覧検索です。 条件指定がなかった場合、全件検索が実行されます。
    *
    * @return 受講生一覧（全件）
    */
@@ -56,8 +57,8 @@ public class StudentController {
           @ApiResponse(responseCode = "400", description = "URLが間違っています。"),}
   )
   @GetMapping("/studentList")
-  public List<StudentDetail> getStudentList() {
-    return service.searchStudentList();
+  public List<StudentDetail> getStudentList(StudentSearchCondition condition) {
+    return service.searchStudentList(condition);
   }
 
   /**

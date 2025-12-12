@@ -48,7 +48,7 @@ class StudentControllerTest {
         .andExpect(status().isOk());
     //     .andExpect(content().json("[]"));
 
-    verify(service, times(1)).searchStudentList();
+    verify(service, times(1)).searchStudentList(any());
     //verify：モックされたメソッドが「呼ばれたかどうか」を確認するもの
   }
 
