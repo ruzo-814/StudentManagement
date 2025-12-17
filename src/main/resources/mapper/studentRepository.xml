@@ -3,12 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="raisetech.student.management.repository.StudentRepository">
 
-  <!-- 受講生の全件検索を行います -->
-  <select id="search" resultType="raisetech.student.management.data.Student">
-    SELECT * FROM students WHERE is_deleted = false
-  </select>
-
-
+  <!-- 受講生の全件検索(条件任意)を行います -->
   <select id="searchByCondition" resultType="raisetech.student.management.data.Student">
     SELECT
     ID,
@@ -93,6 +88,13 @@
   <insert id="insertStudentCourse" parameterType="raisetech.student.management.data.StudentCourse">
     INSERT INTO students_courses (student_id, course_name, start_date, scheduled_end_date)
     VALUES (#{studentId}, #{courseName}, #{startDate}, #{scheduledEndDate})
+  </insert>
+
+
+  <!-- コースの仮申し込み登録を行います -->
+  <insert id="insertCourseStatus" parameterType="raisetech.student.management.data.CourseStatus">
+    INSERT INTO course_status (courses_id, status)
+    VALUES (#{coursesId}, #{status})
   </insert>
 
 

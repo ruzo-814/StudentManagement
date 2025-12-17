@@ -53,7 +53,7 @@ class StudentServiceTest {
     sut.searchStudentList(condition);
 
     //検証
-    verify(repository, times(1)).search();
+    verify(repository, times(1)).searchByCondition(condition);
     verify(repository, times(1)).searchStudentCourseList();
     verify(converter, times(1)).convertStudentDetails(studentList, studentCourseList);
 

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.controller.request.StudentSearchCondition;
+import raisetech.student.management.data.CourseStatus;
+import raisetech.student.management.data.CourseStatus.CourseStatusType;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
@@ -39,7 +41,7 @@ public class StudentService {
    */
   public List<StudentDetail> searchStudentList(StudentSearchCondition condition) {
     if (condition.isEmpty()) {
-      List<Student> studentList = repository.search();
+      List<Student> studentList = repository.searchByCondition(condition);
       List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
       return converter.convertStudentDetails(studentList, studentCourseList);
     } else {
@@ -90,10 +92,11 @@ public class StudentService {
     studentDetail.getStudentCourseList().forEach(studentCourse -> {
       initStudentsCourse(studentCourse, student.getId());
       repository.insertStudentCourse(studentCourse);
+
+      initCourseStatus(studentCourse);
     });
     return studentDetail;
   }
-
 
   /**
    * 受講生コース情報を登録する際の初期情報を設定します。
@@ -107,6 +110,18 @@ public class StudentService {
     studentCourse.setStudentId(id);
     studentCourse.setStartDate(now);
     studentCourse.setScheduledEndDate(now.plusYears(1));
+  }
+
+  /**
+   * コース申し込み状況を初期設定で仮申し込みに設定します。
+   *
+   * @param studentCourse 受講生コース情報
+   */
+  void initCourseStatus(StudentCourse studentCourse){
+    CourseStatus courseStatus = new CourseStatus();
+    courseStatus.setCoursesId(studentCourse.getCoursesId());
+    courseStatus.setStatus(CourseStatusType.TEMPORARY);
+    repository.insertCourseStatus(courseStatus);
   }
 
 

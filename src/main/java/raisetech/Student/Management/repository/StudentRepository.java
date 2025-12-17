@@ -3,6 +3,7 @@ package raisetech.student.management.repository;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import raisetech.student.management.controller.request.StudentSearchCondition;
+import raisetech.student.management.data.CourseStatus;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 
@@ -11,15 +12,6 @@ import raisetech.student.management.data.StudentCourse;
  */
 @Mapper
 public interface StudentRepository {
-
-
-  /**
-   * 受講生の全件検索を行います。
-   *
-   * @return 受講生一覧（全件）
-   */
-  List<Student> search();
-
 
   /**
    * 受講生の全件検索（条件任意）を行います
@@ -38,7 +30,7 @@ public interface StudentRepository {
 
 
   /**
-   * 受講生の検索を行います。
+   * 受講生のID検索を行います。
    *
    * @param id 受講生ID
    * @return 受講生
@@ -70,6 +62,14 @@ public interface StudentRepository {
    * @param studentCourse 受講コース情報
    */
   void insertStudentCourse(StudentCourse studentCourse);
+
+
+  /**
+   * 受講コース情報の新規登録を行います。
+   *
+   * @param courseStatus コース申し込み状況
+   */
+  void insertCourseStatus(CourseStatus courseStatus);
 
 
   /**
