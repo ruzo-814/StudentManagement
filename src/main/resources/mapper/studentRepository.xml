@@ -75,6 +75,13 @@
   </select>
 
 
+  <!-- コースIDに紐づくコース状況の確認を行います -->
+  <select id="searchCourseStatus" resultType="raisetech.student.management.data.CourseStatus">
+    SELECT * FROM course_status
+    WHERE courses_id = #{coursesId}
+  </select>
+
+
   <!-- 受講生の新規登録を行います。IDに関しては自動採番を行います -->
   <insert id="insertStudent" parameterType="raisetech.student.management.data.Student">
     INSERT INTO students (name, furigana, nickname, email_address, area, age, gender, remark,
@@ -110,6 +117,11 @@
   <!-- 受講生コース情報のコース名の更新を行います -->
   <update id="updateStudentCourse" parameterType="raisetech.student.management.data.StudentCourse">
     UPDATE students_courses SET course_name = #{courseName} WHERE courses_ID = #{coursesId}
+  </update>
+
+
+  <update id="updateCourseStatus">
+    UPDATE course_status SET status = #{status} WHERE courses_id = #{coursesId}
   </update>
 
 
