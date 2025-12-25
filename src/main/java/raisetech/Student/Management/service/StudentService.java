@@ -40,16 +40,10 @@ public class StudentService {
    * @return 受講生一覧（全件）
    */
   public List<StudentDetail> searchStudentList(StudentSearchCondition condition) {
-    if (condition.isEmpty()) {
-      List<Student> studentList = repository.searchByCondition(condition);
-      List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
-      return converter.convertStudentDetails(studentList, studentCourseList);
-    } else {
       List<Student> studentList = repository.searchByCondition(condition);
       List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
       return converter.convertStudentDetails(studentList, studentCourseList);
     }
-  }
 
 
   /**
@@ -65,15 +59,31 @@ public class StudentService {
 
   /**
    * 受講生詳細検索です。
-   * IDに紐づく受講生の情報を取得したあと、その受講生に紐づく受講生コース情報を取得して設定します。
+   * 受講生IDに紐づく受講生の情報を取得したあと、その受講生に紐づく受講生コース情報を取得して設定します。
    *
-   * @param id
+   * @param id　受講生ID
    * @return
    */
   public StudentDetail searchStudent(String id) {
     Student student = repository.searchStudent(id);
     List<StudentCourse> studentCourse = repository.searchStudentCourse(student.getId());
     return new StudentDetail(student, studentCourse);
+  }
+
+
+  /**
+   * コースの申し込み状況検索です。
+   * コースIDに紐づくコース情報を取得します。
+   *
+   * @param coursesId 受講コースID
+   * @return コース申し込み状況
+   */
+  public List<CourseStatus> searchCourseStatus(String coursesId) {
+    if (coursesId == null) {
+      return repository.searchCourseStatus();
+    } else {
+      return repository.searchCourseStatusByCourseId(coursesId);
+    }
   }
 
 
@@ -136,5 +146,62 @@ public class StudentService {
     repository.updateStudent(studentDetail.getStudent());
     studentDetail.getStudentCourseList()
         .forEach(studentCourse -> repository.updateStudentCourse(studentCourse));
+  }
+
+
+  /**
+   * コース状況更新です。
+   * コース申し込み状況を更新します。
+   *
+   * @param coursesId コースID
+   */
+  @Transactional
+  public void updateCourseStatus(String coursesId, CourseStatusType nextStatus) {
+    List<CourseStatus> courseStatusList = repository.searchCourseStatusByCourseId(coursesId);
+    if (courseStatusList.isEmpty()) {
+      throw new IllegalArgumentException("指定したコースが存在しません。");
+    }
+    CourseStatus current = courseStatusList.getFirst();
+
+    if (!isValidTransition(current.getStatus(), nextStatus)) {
+      throw new IllegalStateException(
+          createInvalidStatusMessage(nextStatus));
+    }
+    repository.updateCourseStatus(coursesId, nextStatus);
+  }
+
+
+  /**
+   *
+   * @param current 現在のコース状況
+   * @param next 更新したいコース状況
+   * @return コース状況の変遷
+   */
+  private boolean isValidTransition(
+      CourseStatusType current,
+      CourseStatusType next) {
+
+    return switch (current) {
+      case TEMPORARY -> next == CourseStatusType.APPLIED;
+      case APPLIED -> next == CourseStatusType.IN_PROGRESS;
+      case IN_PROGRESS -> next == CourseStatusType.COMPLETED;
+      case COMPLETED -> false;
+    };
+  }
+
+
+  /**
+   * コース申し込み状況更新の際のエラーメッセージです。
+   *
+   * @param nextStatus 次のコース申し込み状況
+   * @return エラーメッセージ
+   */
+  private String createInvalidStatusMessage(CourseStatusType nextStatus) {
+    return switch (nextStatus) {
+      case APPLIED -> "仮申し込み状態ではありません。";
+      case IN_PROGRESS -> "本申し込み状態ではありません。";
+      case COMPLETED -> "受講中ではありません。";
+      default -> "不正な状態です。";
+    };
   }
 }

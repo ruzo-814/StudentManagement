@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import raisetech.student.management.data.CourseStatus.CourseStatusType;
 
 @Schema(description = "受講生コース情報")
 @Getter

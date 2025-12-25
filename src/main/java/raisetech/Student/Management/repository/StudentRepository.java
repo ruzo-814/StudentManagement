@@ -48,6 +48,23 @@ public interface StudentRepository {
 
 
   /**
+   * 受講コースIDに紐づく申し込み状況の確認を行います。
+   *
+   * @param coursesId 受講コースID
+   * @return コース申し込み状況
+   */
+  List<CourseStatus> searchCourseStatusByCourseId(String coursesId);
+
+
+  /**
+   * コースの申し込み状況の確認を行います。
+   *
+   * @return コース申し込み状況
+   */
+  List<CourseStatus> searchCourseStatus();
+
+
+  /**
    * 受講生の新規登録を行います。
    * IDに関しては自動採番を行います。
    *
@@ -86,6 +103,15 @@ public interface StudentRepository {
    * @param studentCourse 受講コース情報
    */
   void updateStudentCourse(StudentCourse studentCourse);
+
+
+  /**
+   * コース申し込み状況を更新します。
+   *
+   * @param coursesId 受講コースID
+   * @param status 申し込み状況
+   */
+  void updateCourseStatus(String coursesId, CourseStatus.CourseStatusType status);
 }
 
 //複雑な処理はできない
