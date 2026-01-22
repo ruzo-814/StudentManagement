@@ -134,7 +134,6 @@ public class StudentController {
   @GetMapping("/CourseStatus")
   public List<CourseStatus> getCourseStatus(
       @RequestParam(required = false)
-      @PathVariable
       @Pattern(regexp = "^\\d+$", message = "受講コースIDは数字のみです")
       String coursesId) {
 

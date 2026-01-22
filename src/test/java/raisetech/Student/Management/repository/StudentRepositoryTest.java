@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import raisetech.student.management.controller.request.StudentSearchCondition;
+import raisetech.student.management.data.CourseStatus;
+import raisetech.student.management.data.CourseStatus.CourseStatusType;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 
@@ -62,6 +64,24 @@ class StudentRepositoryTest {
     List<StudentCourse> actual = sut.searchStudentCourse("3");
 
     assertThat(actual.get(0).getStudentId()).isEqualTo("3");
+  }
+
+
+  @Test
+  void コース申込状況の全件検索ができること() {
+    List<CourseStatus> actual = sut.searchCourseStatus();
+
+    assertThat(actual.size()).isEqualTo(5);
+  }
+
+
+  @Test
+  void コース申込状況のID検索ができること() {
+    List<CourseStatus> actual = sut.searchCourseStatusByCourseId("5");
+
+    assertThat(actual).hasSize(1);
+    assertThat(actual.get(0).getStatus())
+        .isEqualTo(CourseStatusType.TEMPORARY);
   }
 
 

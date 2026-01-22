@@ -48,7 +48,7 @@ public interface StudentRepository {
 
 
   /**
-   * 受講コースIDに紐づく申し込み状況の確認を行います。
+   * 受講コースIDに紐づく申し込み状況の検索を行います。
    *
    * @param coursesId 受講コースID
    * @return コース申し込み状況
@@ -57,7 +57,7 @@ public interface StudentRepository {
 
 
   /**
-   * コースの申し込み状況の確認を行います。
+   * コースの申し込み状況の全件検索を行います。
    *
    * @return コース申し込み状況
    */

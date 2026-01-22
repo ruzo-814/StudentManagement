@@ -1,6 +1,7 @@
 package raisetech.student.management.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -16,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.controller.request.StudentSearchCondition;
+import raisetech.student.management.data.CourseStatus;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
@@ -105,7 +107,91 @@ class StudentServiceTest {
       //後処理
     }
 
-    @Test
+
+  @Test
+  void コース申込状況検索_coursesId指定の場合はID検索が呼ばれること() {
+    when(repository.searchCourseStatusByCourseId("5")).thenReturn(List.of());
+
+    sut.searchCourseStatus("5");
+
+    verify(repository, times(1)).searchCourseStatusByCourseId("5");
+    verify(repository, times(0)).searchCourseStatus();
+  }
+
+
+  @Test
+  void コース申込状況検索_coursesIdがnullの場合は全件検索が呼ばれること() {
+    when(repository.searchCourseStatus()).thenReturn(List.of());
+
+    sut.searchCourseStatus(null);
+
+    verify(repository, times(1)).searchCourseStatus();
+    verify(repository, times(0)).searchCourseStatusByCourseId(any());
+  }
+
+
+  @Test
+  void コース状況が仮申込から本申込に更新できること() {
+    CourseStatus status = new CourseStatus();
+    status.setStatus(CourseStatus.CourseStatusType.TEMPORARY);
+
+    when(repository.searchCourseStatusByCourseId("1")).thenReturn(List.of(status));
+
+    sut.updateCourseStatus("1", CourseStatus.CourseStatusType.APPLIED);
+
+    verify(repository).updateCourseStatus("1", CourseStatus.CourseStatusType.APPLIED);
+  }
+
+
+  @Test
+  void コース状況が本申し込みから受講中に更新できること() {
+    CourseStatus status = new CourseStatus();
+    status.setStatus(CourseStatus.CourseStatusType.APPLIED);
+
+    when(repository.searchCourseStatusByCourseId("2")).thenReturn(List.of(status));
+
+    sut.updateCourseStatus("2", CourseStatus.CourseStatusType.IN_PROGRESS);
+
+    verify(repository).updateCourseStatus("2", CourseStatus.CourseStatusType.IN_PROGRESS);
+  }
+
+
+  @Test
+  void コース状況が受講中から受講完了に更新できること() {
+    CourseStatus status = new CourseStatus();
+    status.setStatus(CourseStatus.CourseStatusType.IN_PROGRESS);
+
+    when(repository.searchCourseStatusByCourseId("3")).thenReturn(List.of(status));
+
+    sut.updateCourseStatus("3", CourseStatus.CourseStatusType.COMPLETED);
+
+    verify(repository).updateCourseStatus("3", CourseStatus.CourseStatusType.COMPLETED);
+  }
+
+
+  @Test
+  void コース状況の変遷が正しくない場合に例外が発生すること() {
+    CourseStatus status = new CourseStatus();
+    status.setStatus(CourseStatus.CourseStatusType.TEMPORARY);
+
+    when(repository.searchCourseStatusByCourseId("1")).thenReturn(List.of(status));
+
+    Assertions.assertThrows(IllegalStateException.class,
+        () -> sut.updateCourseStatus("1", CourseStatus.CourseStatusType.COMPLETED));
+  }
+
+
+  @Test
+  void コース状況IDが存在しない場合に例外が発生すること() {
+    when(repository.searchCourseStatusByCourseId("999")).thenReturn(List.of());
+
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        () -> sut.updateCourseStatus("999", CourseStatus.CourseStatusType.APPLIED));
+  }
+
+
+  @Test
     void 新規受講生登録_リポジトリの処理が適切に呼び出せていること () {
       //事前準備
       Student student = new Student();

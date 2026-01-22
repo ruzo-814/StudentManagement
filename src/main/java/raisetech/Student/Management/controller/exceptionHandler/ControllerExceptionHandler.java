@@ -46,4 +46,28 @@ public class ControllerExceptionHandler {
   public ResponseEntity<String> postTestException(TestRegisterException ex) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
   }
+
+
+  /**
+   * コース申し込み状況の状態遷移が不正な場合の例外処理です。
+   *
+   * @param ex 不正な状態遷移
+   * @return 400 Bad Request
+   */
+  @ExceptionHandler(IllegalStateException.class)
+  public ResponseEntity<String> handleIllegalStateException(IllegalStateException ex) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+  }
+
+
+  /**
+   * 指定したコースが存在しない場合の例外処理です。
+   *
+   * @param ex 存在しない coursesId
+   * @return 404 Not Found
+   */
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+  }
 }
