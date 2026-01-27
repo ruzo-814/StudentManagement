@@ -20,3 +20,10 @@ course_name varchar(100) NOT NULL,
 start_date TIMESTAMP,
 scheduled_end_date TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS course_status
+(
+  status_id INT AUTO_INCREMENT PRIMARY KEY,
+  courses_id INT NOT NULL,
+  status VARCHAR(20) NOT NULL
+);

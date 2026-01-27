@@ -7,6 +7,9 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import raisetech.student.management.controller.request.StudentSearchCondition;
+import raisetech.student.management.data.CourseStatus;
+import raisetech.student.management.data.CourseStatus.CourseStatusType;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 
@@ -18,6 +21,8 @@ class StudentRepositoryTest {
 
   @Test
   void 受講生の全件検索が行えること() {
+    StudentSearchCondition condition = new StudentSearchCondition();
+
     List<Student> expected = List.of(
         new Student("1", "John Miller", "Jon Mira", "Johnny",
             "john.miller@example.com", "New York", 20, "male", null, false),
@@ -31,7 +36,7 @@ class StudentRepositoryTest {
             "alex.smith@example.com", "Seattle", 21, "other", null, false)
     );
 
-    List<Student> actual = sut.search();
+    List<Student> actual = sut.searchByCondition(condition);
 
     assertThat(actual.size()).isEqualTo(5);
     assertThat(actual).isEqualTo(expected);
@@ -63,12 +68,31 @@ class StudentRepositoryTest {
 
 
   @Test
+  void コース申込状況の全件検索ができること() {
+    List<CourseStatus> actual = sut.searchCourseStatus();
+
+    assertThat(actual.size()).isEqualTo(5);
+  }
+
+
+  @Test
+  void コース申込状況のID検索ができること() {
+    List<CourseStatus> actual = sut.searchCourseStatusByCourseId("5");
+
+    assertThat(actual).hasSize(1);
+    assertThat(actual.get(0).getStatus())
+        .isEqualTo(CourseStatusType.TEMPORARY);
+  }
+
+
+  @Test
   void 受講生の登録が行えること() {
     Student student = testStudent();
+    StudentSearchCondition condition = new StudentSearchCondition();
 
     sut.insertStudent(student);
 
-    List<Student> actual = sut.search();
+    List<Student> actual = sut.searchByCondition(condition);
 
     assertThat(actual.size()).isEqualTo(6);
   }

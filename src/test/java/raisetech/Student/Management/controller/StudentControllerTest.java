@@ -2,6 +2,7 @@ package raisetech.student.management.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import raisetech.student.management.data.CourseStatus.CourseStatusType;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
@@ -48,7 +50,7 @@ class StudentControllerTest {
         .andExpect(status().isOk());
     //     .andExpect(content().json("[]"));
 
-    verify(service, times(1)).searchStudentList();
+    verify(service, times(1)).searchStudentList(any());
     //verify：モックされたメソッドが「呼ばれたかどうか」を確認するもの
   }
 
@@ -69,6 +71,26 @@ class StudentControllerTest {
         .andExpect(status().isOk());
 
     verify(service, times(1)).searchStudentCousesList();
+  }
+
+
+  @Test
+  void コース申込状況のID検索が実行できてID検索したコース申し込み状況が返ってくること()
+      throws Exception {
+    mockMvc.perform(get("/CourseStatus")
+            .param("coursesId", "1"))
+        .andExpect(status().isOk());
+
+    verify(service, times(1)).searchCourseStatus("1");
+  }
+
+
+  @Test
+  void コース申込状況の一覧検索が実行できて空のリストが返ってくること() throws Exception {
+    mockMvc.perform(get("/CourseStatus"))
+        .andExpect(status().isOk());
+
+    verify(service, times(1)).searchCourseStatus(null);
   }
 
 
@@ -129,10 +151,44 @@ class StudentControllerTest {
 
 
   @Test
+  void コース申し込み状況を仮申込から本申し込みに更新できること() throws Exception {
+    mockMvc.perform(patch("/CourseStatus/{coursesId}/apply", "1"))
+        .andExpect(status().isOk())
+        .andExpect(content().string("本登録が完了しました。"));
+
+    verify(service, times(1))
+        .updateCourseStatus("1", CourseStatusType.APPLIED);
+  }
+
+
+  @Test
+  void コース申し込み状況を本申し込みから受講中に更新できること() throws Exception {
+    mockMvc.perform(patch("/CourseStatus/{coursesId}/inProgress", "2"))
+        .andExpect(status().isOk())
+        .andExpect(content().string("受講開始しました。"));
+
+    verify(service, times(1))
+        .updateCourseStatus("2", CourseStatusType.IN_PROGRESS);
+  }
+
+
+  @Test
+  void コース申し込み状況を受講中から受講完了に更新できること() throws Exception {
+    mockMvc.perform(patch("/CourseStatus/{coursesId}/completed", "3"))
+        .andExpect(status().isOk())
+        .andExpect(content().string("受講終了しました。"));
+
+    verify(service, times(1))
+        .updateCourseStatus("3", CourseStatusType.COMPLETED);
+  }
+
+
+  @Test
   void 受講生詳細の例外APIが実行できて400エラーが返ってくること() throws Exception {
     mockMvc.perform(get("/testSearchException"))
         .andExpect(status().is4xxClientError())
-        .andExpect(content().string("現在このAPIは利用できません。URLは「studentList」ではなく「students」を利用してください。"));
+        .andExpect(content().string(
+            "現在このAPIは利用できません。URLは「studentList」ではなく「students」を利用してください。"));
   }
 
 
@@ -241,5 +297,29 @@ class StudentControllerTest {
     assertThat(violations.size()).isEqualTo(2);
     assertThat(violations).extracting("message")
         .containsOnly("数字のみ入力するようにしてください。");
+  }
+
+
+  @Test
+  void 仮申し込み状態で本申し込み以外のAPIを呼ぶと400エラーが返ること() throws Exception {
+    doThrow(new IllegalStateException("受講中ではありません。"))
+        .when(service)
+        .updateCourseStatus("1", CourseStatusType.COMPLETED);
+
+    mockMvc.perform(patch("/CourseStatus/{coursesId}/completed", "1"))
+        .andExpect(status().isBadRequest())
+        .andExpect(content().string("受講中ではありません。"));
+  }
+
+
+  @Test
+  void 存在しない申し込み状況IDで受講開始APIを呼ぶと404が返ること() throws Exception {
+    doThrow(new IllegalArgumentException("指定したコースが存在しません。"))
+        .when(service)
+        .updateCourseStatus("999", CourseStatusType.IN_PROGRESS);
+
+    mockMvc.perform(patch("/CourseStatus/{coursesId}/inProgress", "999"))
+        .andExpect(status().isNotFound())
+        .andExpect(content().string("指定したコースが存在しません。"));
   }
 }

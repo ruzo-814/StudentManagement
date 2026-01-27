@@ -6,17 +6,24 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import raisetech.student.management.controller.request.StudentSearchCondition;
+import raisetech.student.management.data.CourseStatus;
+import raisetech.student.management.data.CourseStatus.CourseStatusType;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
@@ -40,7 +47,7 @@ public class StudentController {
   }
 
   /**
-   * 受講生一覧検索です。 全件検索を行うので、条件指定は行いません。
+   * 受講生一覧検索です。 条件指定がなかった場合、全件検索が実行されます。
    *
    * @return 受講生一覧（全件）
    */
@@ -56,8 +63,8 @@ public class StudentController {
           @ApiResponse(responseCode = "400", description = "URLが間違っています。"),}
   )
   @GetMapping("/studentList")
-  public List<StudentDetail> getStudentList() {
-    return service.searchStudentList();
+  public List<StudentDetail> getStudentList(StudentSearchCondition condition) {
+    return service.searchStudentList(condition);
   }
 
   /**
@@ -103,6 +110,36 @@ public class StudentController {
   public List<StudentCourse> getStudentCousesList() {
     return service.searchStudentCousesList();
   }
+
+
+  /**
+   * コース申し込み状況確認です。
+   *
+   * @param coursesId 受講コースID
+   * @return コース申し込み状況
+   */
+  @Operation(summary = "コース申し込み状況確認",
+      description = "指定した受講コースの申し込み状況を取得します。",
+      parameters = {@Parameter(name = "coursesId", description = "受講コースID", required = true)},
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "コース申し込み状況を表示します。",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = CourseStatus.class)
+              )),
+          @ApiResponse(responseCode = "404", description = "指定したIDの受講生が存在しません。")}
+  )
+  @GetMapping("/CourseStatus")
+  public List<CourseStatus> getCourseStatus(
+      @RequestParam(required = false)
+      @Pattern(regexp = "^\\d+$", message = "受講コースIDは数字のみです")
+      String coursesId) {
+
+    return service.searchCourseStatus(coursesId);
+  }
+
 
   /**
    * 新規受講生登録です。
@@ -160,6 +197,78 @@ public class StudentController {
   public ResponseEntity<String> updateStudent(@RequestBody @Valid StudentDetail studentDetail) {
     service.updateStudent(studentDetail);
     return ResponseEntity.ok("更新処理が成功しました。");
+  }
+
+
+  /**
+   * コースの本登録を行います。
+   *
+   * @param coursesId 受講コースID
+   * @return 実行結果
+   */
+  @Operation(
+      summary = "コース本登録",
+      description = "仮申し込み状態のコースを本登録状態に変更します。",
+      parameters = {@Parameter(name = "coursesId", description = "受講コースID", required = true)},
+      responses = {
+          @ApiResponse(responseCode = "200", description = "本登録が完了しました。"),
+          @ApiResponse(responseCode = "400", description = "仮申し込み状態ではありません。"),
+          @ApiResponse(responseCode = "404", description = "指定したコースが存在しません。")
+      }
+  )
+  @PatchMapping("/CourseStatus/{coursesId}/apply")
+  public ResponseEntity<String> applyCourse(
+      @PathVariable @Pattern(regexp = "^\\d+$", message = "受講コースIDは数字のみです") String coursesId) {
+    service.updateCourseStatus(coursesId, CourseStatusType.APPLIED);
+    return ResponseEntity.ok("本登録が完了しました。");
+  }
+
+
+  /**
+   * コースの受講を開始します。
+   *
+   * @param coursesId 受講コースID
+   * @return 実行結果
+   */
+  @Operation(
+      summary = "コース受講中",
+      description = "本申し込み状態のコースを受講中に変更します。",
+      parameters = {@Parameter(name = "coursesId", description = "受講コースID", required = true)},
+      responses = {
+          @ApiResponse(responseCode = "200", description = "受講開始しました。"),
+          @ApiResponse(responseCode = "400", description = "本申し込み状態ではありません。"),
+          @ApiResponse(responseCode = "404", description = "指定したコースが存在しません。")
+      }
+  )
+  @PatchMapping("/CourseStatus/{coursesId}/inProgress")
+  public ResponseEntity<String> inProgress(
+      @PathVariable @Pattern(regexp = "^\\d+$", message = "受講コースIDは数字のみです") String coursesId) {
+    service.updateCourseStatus(coursesId, CourseStatusType.IN_PROGRESS);
+    return ResponseEntity.ok("受講開始しました。");
+  }
+
+
+  /**
+   * コースの受講を終了します。
+   *
+   * @param coursesId 受講コースID
+   * @return 実行結果
+   */
+  @Operation(
+      summary = "コース受講終了",
+      description = "受講中のコースを受講終了します。",
+      parameters = {@Parameter(name = "coursesId", description = "受講コースID", required = true)},
+      responses = {
+          @ApiResponse(responseCode = "200", description = "受講終了しました。"),
+          @ApiResponse(responseCode = "400", description = "受講中ではありません。"),
+          @ApiResponse(responseCode = "404", description = "指定したコースが存在しません。")
+      }
+  )
+  @PatchMapping("/CourseStatus/{coursesId}/completed")
+  public ResponseEntity<String> completed(
+      @PathVariable @Pattern(regexp = "^\\d+$", message = "受講コースIDは数字のみです") String coursesId) {
+    service.updateCourseStatus(coursesId, CourseStatusType.COMPLETED);
+    return ResponseEntity.ok("受講終了しました。");
   }
 
 

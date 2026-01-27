@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import raisetech.student.management.controller.converter.StudentConverter;
+import raisetech.student.management.controller.request.StudentSearchCondition;
+import raisetech.student.management.data.CourseStatus;
+import raisetech.student.management.data.CourseStatus.CourseStatusType;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
@@ -32,15 +35,15 @@ public class StudentService {
 
   /**
    * 受講生詳細一覧検索です。
-   * 全件検索を行うので、条件指定は行いません。
+   * 条件が空の場合、全件検索を行います
    *
    * @return 受講生一覧（全件）
    */
-  public List<StudentDetail> searchStudentList() {
-    List<Student> studentList = repository.search();
-    List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
-    return converter.convertStudentDetails(studentList, studentCourseList);
-  }
+  public List<StudentDetail> searchStudentList(StudentSearchCondition condition) {
+      List<Student> studentList = repository.searchByCondition(condition);
+      List<StudentCourse> studentCourseList = repository.searchStudentCourseList();
+      return converter.convertStudentDetails(studentList, studentCourseList);
+    }
 
 
   /**
@@ -56,15 +59,31 @@ public class StudentService {
 
   /**
    * 受講生詳細検索です。
-   * IDに紐づく受講生の情報を取得したあと、その受講生に紐づく受講生コース情報を取得して設定します。
+   * 受講生IDに紐づく受講生の情報を取得したあと、その受講生に紐づく受講生コース情報を取得して設定します。
    *
-   * @param id
+   * @param id　受講生ID
    * @return
    */
   public StudentDetail searchStudent(String id) {
     Student student = repository.searchStudent(id);
     List<StudentCourse> studentCourse = repository.searchStudentCourse(student.getId());
     return new StudentDetail(student, studentCourse);
+  }
+
+
+  /**
+   * コースの申し込み状況検索です。
+   * コースIDに紐づくコース情報を取得します。
+   *
+   * @param coursesId 受講コースID
+   * @return コース申し込み状況
+   */
+  public List<CourseStatus> searchCourseStatus(String coursesId) {
+    if (coursesId == null) {
+      return repository.searchCourseStatus();
+    } else {
+      return repository.searchCourseStatusByCourseId(coursesId);
+    }
   }
 
 
@@ -83,10 +102,11 @@ public class StudentService {
     studentDetail.getStudentCourseList().forEach(studentCourse -> {
       initStudentsCourse(studentCourse, student.getId());
       repository.insertStudentCourse(studentCourse);
+
+      initCourseStatus(studentCourse);
     });
     return studentDetail;
   }
-
 
   /**
    * 受講生コース情報を登録する際の初期情報を設定します。
@@ -102,6 +122,18 @@ public class StudentService {
     studentCourse.setScheduledEndDate(now.plusYears(1));
   }
 
+  /**
+   * コース申し込み状況を初期設定で仮申し込みに設定します。
+   *
+   * @param studentCourse 受講生コース情報
+   */
+  void initCourseStatus(StudentCourse studentCourse){
+    CourseStatus courseStatus = new CourseStatus();
+    courseStatus.setCoursesId(studentCourse.getCoursesId());
+    courseStatus.setStatus(CourseStatusType.TEMPORARY);
+    repository.insertCourseStatus(courseStatus);
+  }
+
 
   /**
    * 受講生情報更新です。
@@ -114,5 +146,62 @@ public class StudentService {
     repository.updateStudent(studentDetail.getStudent());
     studentDetail.getStudentCourseList()
         .forEach(studentCourse -> repository.updateStudentCourse(studentCourse));
+  }
+
+
+  /**
+   * コース状況更新です。
+   * コース申し込み状況を更新します。
+   *
+   * @param coursesId コースID
+   */
+  @Transactional
+  public void updateCourseStatus(String coursesId, CourseStatusType nextStatus) {
+    List<CourseStatus> courseStatusList = repository.searchCourseStatusByCourseId(coursesId);
+    if (courseStatusList.isEmpty()) {
+      throw new IllegalArgumentException("指定したコースが存在しません。");
+    }
+    CourseStatus current = courseStatusList.getFirst();
+
+    if (!isValidTransition(current.getStatus(), nextStatus)) {
+      throw new IllegalStateException(
+          createInvalidStatusMessage(nextStatus));
+    }
+    repository.updateCourseStatus(coursesId, nextStatus);
+  }
+
+
+  /**
+   *
+   * @param current 現在のコース状況
+   * @param next 更新したいコース状況
+   * @return コース状況の変遷
+   */
+  private boolean isValidTransition(
+      CourseStatusType current,
+      CourseStatusType next) {
+
+    return switch (current) {
+      case TEMPORARY -> next == CourseStatusType.APPLIED;
+      case APPLIED -> next == CourseStatusType.IN_PROGRESS;
+      case IN_PROGRESS -> next == CourseStatusType.COMPLETED;
+      case COMPLETED -> false;
+    };
+  }
+
+
+  /**
+   * コース申し込み状況更新の際のエラーメッセージです。
+   *
+   * @param nextStatus 次のコース申し込み状況
+   * @return エラーメッセージ
+   */
+  private String createInvalidStatusMessage(CourseStatusType nextStatus) {
+    return switch (nextStatus) {
+      case APPLIED -> "仮申し込み状態ではありません。";
+      case IN_PROGRESS -> "本申し込み状態ではありません。";
+      case COMPLETED -> "受講中ではありません。";
+      default -> "不正な状態です。";
+    };
   }
 }
